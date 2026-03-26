@@ -27,4 +27,4 @@ class DoclingConverter:
         )
         
     def convert(self, in_file):
-        return self.converter.convert(in_file)
+        return self.converter.convert(in_file)  
