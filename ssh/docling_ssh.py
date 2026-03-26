@@ -24,7 +24,7 @@ def run():
 
     for pdf in unprocessed: 
         with open(pdf, 'rb') as f:
-            pdf_hash = hashlib.sha256(f.read()).digest()
+            pdf_hash = hashlib.sha256(f.read()).hexdigest()
             
         os.remove(pdf)
         
