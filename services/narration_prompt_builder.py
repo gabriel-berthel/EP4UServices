@@ -1,6 +1,6 @@
 # service/narration_prompt_service.py
 
-from typing import List
+from typing import List, Tuple
 import re
 
 def contains_reference(text: str, ref_prefix: str, ref_num: int) -> bool:
@@ -31,7 +31,7 @@ class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
     # (identifier, caption) tuples
-    def __init__(self, tables: List[str, str], figures: List[str, str], footnotes: List[str, str]):
+    def __init__(self, tables: List[Tuple[str, str]], figures: List[Tuple[str, str]], footnotes: List[Tuple[str, str]]):
         
         self.tables = tables
         self.figures = figures
