@@ -11,7 +11,7 @@ class NarrationPromptBuilder:
         self.figures_list = " - " + "\n\n - ".join(fi for fi in fig_captions) or "None"
         self.footnotes_list = " - " + "\n\n - ".join(fo for fo in foot_captions) or "None"
         
-    def build_system_prompt() -> str:
+    def build_system_prompt(self) -> str:
         return SYSTEM
 
     def build_user_prompt(self, chunk_text: str) -> str:
