@@ -1,11 +1,11 @@
 # service/narration_prompt_service.py
 
-from typing import Dict
+from typing import Dict, List
 
 class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
-    def __init__(self, tab_captions, fig_captions, foot_captions):
+    def __init__(self, tab_captions: List[str], fig_captions: List[str], foot_captions: List[str]):
         
         self.tables_list = "\n".join(ta for ta in tab_captions) or "None"
         self.figures_list = "\n".join(fi for fi in fig_captions) or "None"
