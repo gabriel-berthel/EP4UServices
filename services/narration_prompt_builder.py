@@ -59,9 +59,6 @@ Figures:
 Footnotes:
 {footnotes}
 
-Instructions:
-{instructions}
-
 Process step-by-step, inserting SHOW/HIGHLIGHT markers as appropriate.
 Include footnotes, tables, figure captions only if they help comprehension.
 Output JSON with key "TTSChunks", ready for TTS playback.
