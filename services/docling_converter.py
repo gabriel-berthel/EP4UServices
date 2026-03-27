@@ -20,8 +20,8 @@ class DoclingConverter:
             images_scale=1.0,
             do_table_structure=False,
             accelerator = AcceleratorDevice.CUDA,
-            ocr_batch_size=16,
-            layout_batch_size=16, 
+            ocr_batch_size=48,
+            layout_batch_size=48, 
         )
         
         self.converter = DocumentConverter(
@@ -31,4 +31,4 @@ class DoclingConverter:
         )
         
     def convert(self, in_file):
-        return self.converter.convert(in_file)  
+        return self.converter.convert(in_file)

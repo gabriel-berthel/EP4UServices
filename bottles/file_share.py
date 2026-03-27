@@ -16,7 +16,7 @@ def hash_file_contents(contents: bytes) -> str:
     return h.hexdigest()
 
 def save_uploaded_file(file_bytes: bytes, filename: str = None) -> str:
-    file_hash = hash_file_contents(file_bytes)
+    file_hash = hash_file_contents(file_bytes)[:32]
     
     file_path = os.path.join(IN_DIR, file_hash)
     with open(file_path, "wb") as f:
@@ -32,7 +32,7 @@ def upload_file():
         return HTTPResponse(status=400, body="No file provided")
 
     file_bytes = upload.file.read()
-    file_id = save_uploaded_file(file_bytes, upload.filename)[:32]
+    file_id = save_uploaded_file(file_bytes, upload.filename)
     
     return {"file_id": file_id}
 
