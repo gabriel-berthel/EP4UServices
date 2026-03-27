@@ -5,24 +5,24 @@ from typing import Dict
 class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
-    @staticmethod
+    def __init__(self, tab_captions, fig_captions, foot_captions):
+        
+        self.tables_list = "\n".join(ta for ta in tab_captions) or "None"
+        self.figures_list = "\n".join(fi for fi in fig_captions) or "None"
+        self.footnotes_list = "\n".join(fo for fo in foot_captions) or "None"
+
+        pass
+    
     def build_system_prompt() -> str:
         return SYSTEM
 
-    @staticmethod
-    def build_user_prompt(input_data: Dict, optional_instructions: str = "") -> str:
-        
-        tables_list = "\n".join(f"{k}: {v}" for k, v in input_data['tables'].items()) or "None"
-        figures_list = "\n".join(f"{k}: {v}" for k, v in input_data['figures'].items()) or "None"
-        footnotes_list = "\n".join(f"{k}: {v}" for k, v in input_data['footnotes'].items()) or "None"
-
+    def build_user_prompt(self, chunk_text: str) -> str:
         
         return USER_BASE.format(
-            chunk_text=input_data['chunk_text'],
-            tables=tables_list,
-            figures=figures_list,
-            footnotes=footnotes_list,
-            instructions=optional_instructions
+            chunk_text=chunk_text,
+            tables=self.tables_list,
+            figures=self.figures_list,
+            footnotes=self.footnotes_list
         )
 
 
