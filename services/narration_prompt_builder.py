@@ -1,26 +1,70 @@
 # service/narration_prompt_service.py
 
-from typing import Dict, List
+from typing import List
+import re
+
+def contains_reference(text: str, ref_prefix: str, ref_num: int) -> bool:
+    """
+    Checks if `text` contains a reference with a specific prefix and number.
+
+    Examples:
+        - ref_prefix="Table", ref_num=2
+        - ref_prefix="Tab", ref_num=3
+        - ref_prefix="Fig", ref_num=1
+
+    Handles cases like:
+        - 'Table 2'
+        - 'Table 2, 3'
+        - 'Tab 1, 2, 3'
+
+    Does NOT match:
+        - 'Table 21' when looking for Table 2
+    """
+    # Build regex pattern dynamically
+    # \b → word boundary
+    # \s+ → one or more spaces
+    # (?:\s*,\s*\d+)* → optionally match ', 3' etc.
+    pattern = rf"\b{re.escape(ref_prefix)}\s+{ref_num}\b(?:\s*,\s*\d+)*"
+    return bool(re.search(pattern, text))
 
 class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
-    def __init__(self, tab_captions: List[str], fig_captions: List[str], foot_captions: List[str]):
-      
-        self.tables_list = " - " + "\n\n - ".join(ta for ta in tab_captions) or "None"
-        self.figures_list = " - " + "\n\n - ".join(fi for fi in fig_captions) or "None"
-        self.footnotes_list = " - " + "\n\n - ".join(fo for fo in foot_captions) or "None"
+    # (identifier, caption) tuples
+    def __init__(self, tables: List[str, str], figures: List[str, str], footnotes: List[str, str]):
         
+        self.tables = tables
+        self.figures = figures
+        self.footnotes = footnotes    
+        
+    def _format_list(self, item_list):   
+        
+        if item_list:
+            self.tables_list = " - " + "\n\n - ".join(i for i in item_list)
+        
+        return "None"
+    
     def build_system_prompt(self) -> str:
         return SYSTEM
 
     def build_user_prompt(self, chunk_text: str) -> str:
+
+        chunk_mentions = []    
+        chunk_footnotes = []
+        
+        for identifier, caption in self.tables + self.figures:
+            prefix, num = identifier.split(" ")
+            if contains_reference(chunk_text, prefix, num):
+                chunk_mentions.append(caption)
+        
+        for identifier, caption in self.tables:
+            if identifier in chunk_text:
+                chunk_footnotes.append(caption)
         
         return USER_BASE.format(
             chunk_text=chunk_text,
-            tables=self.tables_list,
-            figures=self.figures_list,
-            footnotes=self.footnotes_list
+            mentions=self._format_list(chunk_mentions),
+            footnotes=self._format_list(chunk_footnotes)
         )
 
 
@@ -48,13 +92,10 @@ Here is the article content to convert into TTS chunks:
 {chunk_text}
 
 Reference sheet:
-Tables:
-{tables}
+Candidate mentions:
+{mentions}
 
-Figures:
-{figures}
-
-Footnotes:
+Candidate footnotes:
 {footnotes}
 
 Process step-by-step, inserting SHOW/HIGHLIGHT markers as appropriate.
