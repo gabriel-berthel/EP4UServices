@@ -6,13 +6,11 @@ class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
     def __init__(self, tab_captions: List[str], fig_captions: List[str], foot_captions: List[str]):
+      
+        self.tables_list = " - " + "\n\n - ".join(ta for ta in tab_captions) or "None"
+        self.figures_list = " - " + "\n\n - ".join(fi for fi in fig_captions) or "None"
+        self.footnotes_list = " - " + "\n\n - ".join(fo for fo in foot_captions) or "None"
         
-        self.tables_list = "\n".join(ta for ta in tab_captions) or "None"
-        self.figures_list = "\n".join(fi for fi in fig_captions) or "None"
-        self.footnotes_list = "\n".join(fo for fo in foot_captions) or "None"
-
-        pass
-    
     def build_system_prompt() -> str:
         return SYSTEM
 
