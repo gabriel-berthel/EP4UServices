@@ -31,7 +31,7 @@ class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
     # (identifier, caption) tuples
-    def __init__(self, tables: List[Tuple[str, str]], figures: List[Tuple[str, str]], footnotes: List[Tuple[str, str]]):
+    def __init__(self, tables: List[Tuple[str, str, str]], figures: List[Tuple[str, str, str]], footnotes: List[Tuple[str, str]]):
         
         self.tables = tables
         self.figures = figures
@@ -52,12 +52,11 @@ class NarrationPromptBuilder:
         chunk_mentions = []    
         chunk_footnotes = []
         
-        for identifier, caption in self.tables + self.figures:
-            prefix, num = identifier.split(" ")
-            if contains_reference(chunk_text, prefix, num):
+        for prefix, identifier, caption in self.tables + self.figures:
+            if contains_reference(chunk_text, prefix, identifier):
                 chunk_mentions.append(caption)
         
-        for identifier, caption in self.tables:
+        for identifier, caption in self.footnotes:
             if identifier in chunk_text:
                 chunk_footnotes.append(caption)
         
