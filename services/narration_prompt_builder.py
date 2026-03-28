@@ -30,7 +30,7 @@ def contains_reference(text: str, ref_prefix: str, ref_num: int) -> bool:
 class NarrationPromptBuilder:
     """Builds system and user prompts for TTS narration from scientific articles."""
 
-    # (identifier, caption) tuples
+    # (prefix, identifier, caption) tuples
     def __init__(self, tables: List[Tuple[str, str, str]], figures: List[Tuple[str, str, str]], footnotes: List[Tuple[str, str]]):
         
         self.tables = tables
@@ -40,7 +40,7 @@ class NarrationPromptBuilder:
     def _format_list(self, item_list):   
         
         if item_list:
-            self.tables_list = " - " + "\n\n - ".join(i for i in item_list)
+            return " - " + "\n\n - ".join(i for i in item_list)
         
         return "None"
     
