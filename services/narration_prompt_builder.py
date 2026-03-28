@@ -58,7 +58,7 @@ class NarrationPromptBuilder:
         
         for identifier, caption in self.footnotes:
             if identifier in chunk_text:
-                chunk_footnotes.append(caption)
+                chunk_footnotes.append(f"{identifier}: {caption}")
         
         return USER_BASE.format(
             chunk_text=chunk_text,
