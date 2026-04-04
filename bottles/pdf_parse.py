@@ -6,7 +6,7 @@ import subprocess
 import os
 import pickle
 
-from EP4UServices.services.local.docling_converter import DoclingConverter
+from services.local.docling_converter import DoclingConverter
 
 app = Bottle()
 
@@ -46,3 +46,4 @@ def parse_file():
         return HTTPResponse(status=500, body="Error parsing file")
 
     return mem_file.getvalue()
+
