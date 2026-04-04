@@ -28,9 +28,12 @@ def parse_file():
     
     file_bytes = content.file.read()
     file_hash = hash_file_contents(file_bytes)[:24]     
+    
+    with open('document.pdf', 'rb') as f:
+        f.write(content.file.read())
 
     try:
-        result = converter.run(content)
+        result = converter.run('document.pdf')
 
         mem_file = BytesIO()
         pickle.dump(result.document, mem_file)
