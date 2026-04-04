@@ -22,15 +22,13 @@ def hash_file_contents(contents: bytes) -> str:
 def parse_file():
     
     content = request.files.get("file")
-
+    content.save('document.pdf')
+      
     if not content:
         return HTTPResponse(status=400, body="No file provided")
     
     file_bytes = content.file.read()
     file_hash = hash_file_contents(file_bytes)[:24]     
-    
-    with open('document.pdf', 'wb') as f:
-        f.write(content.file)
 
     try:
         result = converter.run('document.pdf')
