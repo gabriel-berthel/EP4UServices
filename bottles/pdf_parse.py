@@ -42,7 +42,7 @@ def parse_file():
         response.set_header("Content-Disposition", f"attachment; filename={file_hash}.pickle")
 
     except Exception as e:
-        print("Error parsing:", e)
+        print("Error parsing:", e[:20])
         return HTTPResponse(status=500, body="Error parsing file")
 
     return mem_file.getvalue()
