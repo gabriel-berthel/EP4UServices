@@ -23,14 +23,14 @@ def hash_file_contents(contents: bytes) -> str:
 def parse_file():
     
     content = request.files.get("file")
-    filename = f"document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    filename = f"document_.pdf"
+    
     # Write bytes to file
     with open(filename, "wb") as f:
-        f.write(content.file.read())  # ✅ use .file.read() for FileUpload
+        f.write(content.file.read())
       
     if not content:
         return HTTPResponse(status=400, body="No file provided")
-    
 
     try:
         result = converter.run(filename)

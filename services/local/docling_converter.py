@@ -32,5 +32,5 @@ class DoclingConverter(ParseInterface):
             }
         )
         
-    def run(self, in_file):
-        return self.converter.convert(in_file)
+    def run(self, path):
+        return self.converter.convert(path)
