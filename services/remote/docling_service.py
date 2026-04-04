@@ -5,6 +5,6 @@ class DoclingService(HTTPClient, ParseInterface):
     def __init__(self, url, endpoint = "/"):
         super().__init__(url, endpoint)
         
-    def run(self, payload):
-        resp = self.post(file=payload['file'])
+    def run(self, file_path):
+        resp = self.post(file=file_path)
         return resp

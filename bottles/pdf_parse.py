@@ -18,7 +18,7 @@ def hash_file_contents(contents: bytes) -> str:
     return h.hexdigest()
 
 
-@app.put("/parse")
+@app.post("/parse")
 def parse_file():
     
     upload = request.files.get("file")
