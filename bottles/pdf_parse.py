@@ -24,6 +24,7 @@ def parse_file():
     
     content = request.files.get("file")
     filename = f"document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    content.seek(0)
     content.save(filename)
       
     if not content:
