@@ -30,7 +30,7 @@ def parse_file():
     file_hash = hash_file_contents(file_bytes)[:24]     
     
     with open('document.pdf', 'wb') as f:
-        f.write(content.file.read())
+        f.write(content.file)
 
     try:
         result = converter.run('document.pdf')
