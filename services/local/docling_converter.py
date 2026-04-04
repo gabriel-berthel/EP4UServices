@@ -2,7 +2,7 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption 
 from docling_surya import SuryaOcrOptions
-from docling.datamodel.accelerator_options import AcceleratorDevice
+from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
 
 from services.interfaces import ParseInterface
 
@@ -21,7 +21,7 @@ class DoclingConverter(ParseInterface):
             do_picture_classification = False, # Requires Granite
             images_scale=1.0,
             do_table_structure=False,
-            accelerator = AcceleratorDevice.CUDA,
+            accelerator_options = AcceleratorOptions(device=AcceleratorDevice.CUDA),
             ocr_batch_size=48,
             layout_batch_size=48, 
         )
