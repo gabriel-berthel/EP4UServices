@@ -1,11 +1,10 @@
 from multiprocessing import Process
 from bottle import run
-from bottles import pdf_parse, file_share  # manually import your bottles
+from bottles import pdf_parse
 
 # Each tuple: (Bottle app, port)
 bottles_to_run = [
     (pdf_parse.app, 8080),
-    (file_share.app, 8081)
 ]
 
 processes = []

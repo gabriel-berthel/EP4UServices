@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import re
 
-from services.interfaces import LLMChatInterface, ParseInterface
+from interfaces import LLMChatInterface, ParseInterface
 
 class ServiceGateway:
     def __init__(self, parse_service:ParseInterface, chat_service: LLMChatInterface):

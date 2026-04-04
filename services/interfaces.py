@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class ParseInterface(ABC):
     @abstractmethod
     def run(self, in_file) -> bytes:
