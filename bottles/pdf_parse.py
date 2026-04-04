@@ -6,7 +6,7 @@ import subprocess
 import os
 import pickle
 
-from services.local.docling_converter import DoclingConverter
+from EP4UServices.services.local.docling_converter import DoclingConverter
 
 app = Bottle()
 
@@ -18,15 +18,16 @@ def hash_file_contents(contents: bytes) -> str:
     return h.hexdigest()
 
 
-@app.put("/parse/")
+@app.put("/parse")
 def parse_file():
     
     upload = request.files.get("file")
+    content = upload.read()
 
     if not upload:
         return HTTPResponse(status=400, body="No file provided")
     
-    file_bytes = upload.file.read()
+    file_bytes = content.file.read()
     file_hash = hash_file_contents(file_bytes)[:24]     
 
     try:
