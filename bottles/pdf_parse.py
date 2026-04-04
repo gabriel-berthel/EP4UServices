@@ -21,10 +21,9 @@ def hash_file_contents(contents: bytes) -> str:
 @app.post("/parse")
 def parse_file():
     
-    upload = request.files.get("file")
-    content = upload.read()
+    content = request.files.get("file")
 
-    if not upload:
+    if not content:
         return HTTPResponse(status=400, body="No file provided")
     
     file_bytes = content.file.read()
