@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 from io import BytesIO
 
@@ -22,16 +23,15 @@ def hash_file_contents(contents: bytes) -> str:
 def parse_file():
     
     content = request.files.get("file")
-    content.save('document.pdf')
+    filename = f"document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    content.save(filename)
       
     if not content:
         return HTTPResponse(status=400, body="No file provided")
     
-    file_bytes = content.file.read()
-    file_hash = hash_file_contents(file_bytes)[:24]     
 
     try:
-        result = converter.run('document.pdf')
+        result = converter.run(filename)
 
         mem_file = BytesIO()
         pickle.dump(result.document, mem_file)
@@ -39,7 +39,7 @@ def parse_file():
 
         # Set headers for download
         response.content_type = "application/octet-stream"
-        response.set_header("Content-Disposition", f"attachment; filename={file_hash}.pickle")
+        response.set_header("Content-Disposition", f"attachment; filename={filename}.pickle")
 
     except Exception as e:
         print("Error parsing:", e)
