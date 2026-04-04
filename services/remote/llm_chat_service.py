@@ -1,5 +1,5 @@
-from clients.http_client import HTTPClient
-from interfaces import LLMChatInterface
+from EP4UServices.clients.http_client import HTTPClient
+from EP4UServices.services.interfaces import LLMChatInterface
 
 class LLMChatService(HTTPClient, LLMChatInterface):
     def __init__(self, url, endpoint = "/", model="ministral-3"):

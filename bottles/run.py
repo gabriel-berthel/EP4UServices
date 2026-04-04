@@ -1,6 +1,6 @@
 from multiprocessing import Process
 from bottle import run
-from EP4UServices.bottles import pdf_parse
+from bottles import pdf_parse
 
 # Each tuple: (Bottle app, port)
 bottles_to_run = [
