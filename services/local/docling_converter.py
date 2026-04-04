@@ -3,8 +3,22 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption 
 from docling_surya import SuryaOcrOptions
 from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from services.interfaces import ParseInterface
+
+
+# Surya OCR pad_token_id patch
+# Cuz newer versions of Docling > Transformers v5. Surya still on v4
+tokenizer = AutoTokenizer.from_pretrained("vikp/surya_rec")
+model = AutoModelForSeq2SeqLM.from_pretrained("vikp/surya_rec")
+
+if getattr(model.config, "pad_token_id", None) is None:
+    if tokenizer.pad_token_id is not None:
+        model.config.pad_token_id = tokenizer.pad_token_id
+    else:
+        tokenizer.pad_token = tokenizer.eos_token
+        model.config.pad_token_id = tokenizer.pad_token_id
 
 class DoclingConverter(ParseInterface):
     def __init__(self):
