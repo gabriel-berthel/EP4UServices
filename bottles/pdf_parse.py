@@ -30,7 +30,7 @@ def parse_file():
     file_hash = hash_file_contents(file_bytes)[:24]     
 
     try:
-        result = converter.convert(file_bytes)
+        result = converter.run(content)
 
         mem_file = BytesIO()
         pickle.dump(result.document, mem_file)
