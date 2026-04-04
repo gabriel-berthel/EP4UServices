@@ -24,8 +24,9 @@ def parse_file():
     
     content = request.files.get("file")
     filename = f"document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-    content.seek(0)
-    content.save(filename)
+    # Write bytes to file
+    with open(filename, "wb") as f:
+        f.write(content.file.read())  # ✅ use .file.read() for FileUpload
       
     if not content:
         return HTTPResponse(status=400, body="No file provided")
