@@ -16,6 +16,7 @@ class DoclingConverter(ParseInterface):
             generate_picture_images=True,
             generate_table_images=True,
             do_formula_enrichment=True,
+            do_picture_description=False,
             # code enrichment => requires VLM
             do_chart_extraction=False, # Requires granite
             do_picture_classification = False, # Requires Granite
