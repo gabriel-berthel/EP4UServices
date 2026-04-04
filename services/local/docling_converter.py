@@ -2,9 +2,11 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption 
 from docling_surya import SuryaOcrOptions
-from docling.datamodel.accelerator_options import AcceleratorOptions, AcceleratorDevice
+from docling.datamodel.accelerator_options import AcceleratorDevice
 
-class DoclingConverter:
+from interfaces import ParseInterface
+
+class DoclingConverter(ParseInterface):
     def __init__(self):
         pipeline_options = PdfPipelineOptions(
         do_ocr=True,
@@ -30,5 +32,5 @@ class DoclingConverter:
             }
         )
         
-    def convert(self, in_file):
+    def run(self, in_file):
         return self.converter.convert(in_file)
