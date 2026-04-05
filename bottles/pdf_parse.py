@@ -2,14 +2,14 @@ import datetime
 import hashlib
 from io import BytesIO
 from datetime import datetime  #
-from bottle import Bottle, request, HTTPResponse, response, run, post
+import bottle
 import subprocess
 import os
 import pickle
 
 from services.local.docling_converter import DoclingConverter
 
-app = Bottle()
+app = bottle.Bottle()
 
 converter = DoclingConverter()
 
@@ -18,10 +18,10 @@ def hash_file_contents(contents: bytes) -> str:
     h.update(contents)
     return h.hexdigest()
 
-@post('/parse')
+@bottle.post('/parse')
 def parse_file():
     
-    content = request.files.get("file")
+    content = bottle.request.files.get("file")
     filename = f"document_.pdf"
     
     # Write bytes to file
@@ -29,7 +29,7 @@ def parse_file():
         f.write(content.file.read())
       
     if not content:
-        return HTTPResponse(status=400, body="No file provided")
+        return bottle.HTTPResponse(status=400, body="No file provided")
 
     try:
         result = converter.run(filename)
@@ -39,13 +39,28 @@ def parse_file():
         mem_file.seek(0)  # important, rewind to start
 
         # Set headers for download
-        response.content_type = "application/octet-stream"
-        response.set_header("Content-Disposition", f"attachment; filename={filename}.pickle")
+        bottle.response.content_type = "application/octet-stream"
+        bottle.response.set_header("Content-Disposition", f"attachment; filename={filename}.pickle")
 
     except Exception as e:
         print("Error parsing:", e)
-        return HTTPResponse(status=500, body="Error parsing file")
+        return bottle.HTTPResponse(status=500, body="Error parsing file")
 
     return mem_file.getvalue()
 
-run(host='localhost', port=8080)
+
+
+
+if __name__ == '__main__':
+    try:
+        bottle.run(host='localhost', port=8080)
+    except KeyboardInterrupt:
+        print("\nStopping server...")
+    finally:
+        import torch
+
+        # Clear GPU memory cache
+        torch.cuda.empty_cache()
+
+        # Optionally, force PyTorch to release memory
+        torch.cuda.ipc_collect()
