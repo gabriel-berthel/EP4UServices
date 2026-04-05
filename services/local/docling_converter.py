@@ -5,18 +5,6 @@ from docling_surya import SuryaOcrOptions
 from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
 from services.interfaces import ParseInterface
 
-from transformers.models.auto.configuration_auto import AutoConfig
-
-# Manually add the missing attribute to the Surya config class if it's missing
-from transformers import AutoConfig
-
-# Pre-load and patch the config in memory
-config = AutoConfig.from_pretrained("vikp/surya_ocr")
-if not hasattr(config, "pad_token_id"):
-    config.pad_token_id = 1 
-
-
-
 class DoclingConverter(ParseInterface):
     def __init__(self):
         pipeline_options = PdfPipelineOptions(
@@ -29,11 +17,11 @@ class DoclingConverter(ParseInterface):
             do_formula_enrichment=True,
             do_picture_description=False,
             # code enrichment => requires VLM
-            do_chart_extraction=False, # Requires granite
+            do_chart_extraction=True, # Requires granite
             do_picture_classification = False, # Requires Granite
             images_scale=1.0,
             do_table_structure=False,
-            accelerator_options = AcceleratorOptions(device=AcceleratorDevice.CUDA),
+            accelerator = AcceleratorDevice.CUDA,
             ocr_batch_size=48,
             layout_batch_size=48, 
         )
