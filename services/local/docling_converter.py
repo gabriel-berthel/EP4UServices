@@ -11,7 +11,7 @@ from transformers.models.auto.configuration_auto import AutoConfig
 from transformers import AutoConfig
 
 # Pre-load and patch the config in memory
-config = AutoConfig.from_pretrained("vikp/order_hr")
+config = AutoConfig.from_pretrained("vikp/surya_ocr")
 if not hasattr(config, "pad_token_id"):
     config.pad_token_id = 1 
 
