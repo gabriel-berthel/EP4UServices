@@ -5,6 +5,7 @@ from datetime import datetime  #
 import bottle
 import subprocess
 import os
+import torch
 import pickle
 
 from services.local.docling_converter import DoclingConverter
@@ -31,6 +32,16 @@ def parse_file():
     if not content:
         return bottle.HTTPResponse(status=400, body="No file provided")
 
+
+    try:
+        # Clear GPU memory cache
+        torch.cuda.empty_cache()
+
+        # Optionally, force PyTorch to release memory
+        torch.cuda.ipc_collect()
+    except:
+        pass
+    
     try:
         result = converter.run(filename)
 
@@ -57,7 +68,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("\nStopping server...")
     finally:
-        import torch
+    
 
         # Clear GPU memory cache
         torch.cuda.empty_cache()
