@@ -28,8 +28,8 @@ class DoclingConverter(ParseInterface):
             layout_batch_size=48
         )
         
-        if os.environ['DOCLING_SERVE_ARTIFACTS_PATH']:
-            pipeline_options.artifacts_path=os.environ['DOCLING_SERVE_ARTIFACTS_PATH']
+        if ' DOCLING_SERVE_ARTIFACTS_PATH' in os.environ.keys():
+            pipeline_optionsartifacts_path=os.environ['DOCLING_SERVE_ARTIFACTS_PATH']
         
         self.converter = DocumentConverter(
             format_options={
