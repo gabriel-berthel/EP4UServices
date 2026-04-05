@@ -1,3 +1,5 @@
+import os
+
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -23,8 +25,11 @@ class DoclingConverter(ParseInterface):
             do_table_structure=False,
             accelerator = AcceleratorDevice.CUDA,
             ocr_batch_size=48,
-            layout_batch_size=48, 
+            layout_batch_size=48
         )
+        
+        if os.environ['DOCLING_SERVE_ARTIFACTS_PATH']:
+            artifacts_path=os.environ['DOCLING_SERVE_ARTIFACTS_PATH']
         
         self.converter = DocumentConverter(
             format_options={
