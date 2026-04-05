@@ -1,7 +1,8 @@
 import datetime
 import hashlib
 from io import BytesIO
-from datetime import datetime  #
+from datetime import datetime
+import signal  #
 import bottle
 import subprocess
 import os
@@ -19,6 +20,18 @@ def hash_file_contents(contents: bytes) -> str:
     h.update(contents)
     return h.hexdigest()
 
+def cleanup(signum, frame):
+    print("\nSignal received, cleaning up GPU memory...")
+    torch.cuda.empty_cache()
+    torch.cuda.ipc_collect()
+    print("Cleanup done. Exiting.")
+    exit(0)
+
+# Register handlers
+signal.signal(signal.SIGINT, cleanup)   # Ctrl+C
+signal.signal(signal.SIGTERM, cleanup)  # kill <PID>
+
+
 @bottle.post('/parse')
 def parse_file():
     
@@ -31,16 +44,6 @@ def parse_file():
       
     if not content:
         return bottle.HTTPResponse(status=400, body="No file provided")
-
-
-    try:
-        # Clear GPU memory cache
-        torch.cuda.empty_cache()
-
-        # Optionally, force PyTorch to release memory
-        torch.cuda.ipc_collect()
-    except:
-        pass
     
     try:
         result = converter.run(filename)
@@ -63,15 +66,6 @@ def parse_file():
 
 
 if __name__ == '__main__':
-    try:
-        bottle.run(host='localhost', port=8080)
-    except KeyboardInterrupt:
-        print("\nStopping server...")
-    finally:
-    
-
-        # Clear GPU memory cache
-        torch.cuda.empty_cache()
-
-        # Optionally, force PyTorch to release memory
-        torch.cuda.ipc_collect()
+    torch.cuda.empty_cache()
+    torch.cuda.ipc_collect()
+    bottle.run(host='localhost', port=8080)
