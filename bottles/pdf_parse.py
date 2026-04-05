@@ -2,7 +2,7 @@ import datetime
 import hashlib
 from io import BytesIO
 from datetime import datetime  #
-from bottle import Bottle, request, HTTPResponse, response, run
+from bottle import Bottle, request, HTTPResponse, response, run, post
 import subprocess
 import os
 import pickle
@@ -18,8 +18,7 @@ def hash_file_contents(contents: bytes) -> str:
     h.update(contents)
     return h.hexdigest()
 
-
-@app.post("/parse")
+@post('/parse')
 def parse_file():
     
     content = request.files.get("file")
