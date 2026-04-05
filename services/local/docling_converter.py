@@ -29,7 +29,7 @@ class DoclingConverter(ParseInterface):
         )
         
         if os.environ['DOCLING_SERVE_ARTIFACTS_PATH']:
-            artifacts_path=os.environ['DOCLING_SERVE_ARTIFACTS_PATH']
+            pipeline_options.artifacts_path=os.environ['DOCLING_SERVE_ARTIFACTS_PATH']
         
         self.converter = DocumentConverter(
             format_options={
