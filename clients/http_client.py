@@ -34,6 +34,7 @@ class HTTPClient(ABC):
             files = {"file": open(file, "rb")}
         try:
             response = requests.post(full_url, json=payload, files=files)
+            print(response)
             response.raise_for_status()
             return response
         finally:

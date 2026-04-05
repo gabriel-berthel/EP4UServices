@@ -7,4 +7,5 @@ class DoclingService(HTTPClient, ParseInterface):
         
     def run(self, file_path):
         resp = self.post(file=file_path)
+        
         return resp
