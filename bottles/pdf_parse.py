@@ -2,7 +2,7 @@ import datetime
 import hashlib
 from io import BytesIO
 from datetime import datetime  #
-from bottle import Bottle, request, HTTPResponse, response
+from bottle import Bottle, request, HTTPResponse, response, run
 import subprocess
 import os
 import pickle
@@ -49,3 +49,4 @@ def parse_file():
 
     return mem_file.getvalue()
 
+run(host='localhost', port=8080)
