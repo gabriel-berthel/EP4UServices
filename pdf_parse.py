@@ -1,11 +1,8 @@
-import datetime
+
 import hashlib
 from io import BytesIO
-from datetime import datetime
 import signal  #
 import bottle
-import subprocess
-import os
 import torch
 import pickle
 
@@ -61,8 +58,6 @@ def parse_file():
         return bottle.HTTPResponse(status=500, body="Error parsing file")
 
     return mem_file.getvalue()
-
-
 
 
 if __name__ == '__main__':
