@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from PIL.Image import Image as PILImage
+from typing import List
 
 class ParseInterface(ABC):
     @abstractmethod
@@ -23,4 +25,9 @@ class LLMChatInterface(ABC):
 class LLMGenerateInterface(ABC):
     @abstractmethod
     def run(self, prompt, parameters):
+        pass
+    
+class OCRInterface(ABC):
+    @abstractmethod
+    def run(self, images: List[PILImage]) -> List[str]:
         pass

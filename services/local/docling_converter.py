@@ -4,7 +4,7 @@ from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_surya import SuryaOcrOptions
-from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
+from docling.datamodel.accelerator_options import AcceleratorDevice
 from services.interfaces import ParseInterface
 
 class DoclingConverter(ParseInterface):
