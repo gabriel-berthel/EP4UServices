@@ -16,13 +16,14 @@ class DoclingConverter(ParseInterface):
             ocr_options=SuryaOcrOptions(lang=["en"], force_full_page_ocr=True, use_gpu=True),
             generate_picture_images=True,
             generate_table_images=True,
+            generate_parsed_pages=True,
             do_formula_enrichment=True,
             do_picture_description=False,
             # code enrichment => requires VLM
             do_chart_extraction=False, # Requires granite
             do_picture_classification = False, # Requires Granite
             images_scale=1.0,
-            do_table_structure=False,
+            do_table_structure=True,
             accelerator = AcceleratorDevice.CUDA,
             ocr_batch_size=48,
             layout_batch_size=48
@@ -33,8 +34,6 @@ class DoclingConverter(ParseInterface):
                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
             }
         )
-    
-        self.converter._get_pipeline(InputFormat.PDF)
-        
+
     def run(self, path):
         return self.converter.convert(path)
