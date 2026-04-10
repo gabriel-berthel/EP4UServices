@@ -1,3 +1,5 @@
+import json
+
 from EP4UServices.clients.http_client import HTTPClient
 from EP4UServices.services.interfaces import LLMChatInterface
 
@@ -19,4 +21,11 @@ class LLMChatService(HTTPClient, LLMChatInterface):
         }
         
         resp = self.post(payload)
-        return resp.content.decode()
+        return self._parse(resp.content.decode())
+    
+    def _parse(self, raw: str):
+        try:
+            data = json.loads(raw)
+            return data["message"]["content"]
+        except Exception:
+            return {"error": "Invalid response", "raw": raw}
