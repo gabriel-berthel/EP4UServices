@@ -92,4 +92,29 @@ class MUXSSHClient(SSHInterface):
         print("Closing SSH connections…")
         self.close()
         
+    @staticmethod    
+    def set_up_and_run(ports: list[tuple[int, int]], target=None, user=None, jump=None) -> "MUXSSHClient":
+        
+        _target = target if target else os.environ.get("SSH_TARGET_HOST", None)
+        _user = user if user else os.environ.get("SSH_USER",  None)
+        _jump = jump if jump else os.environ.get("SSH_JUMP_HOST", None)
+        
+        if _target is None or _user is None or _jump is None:
+            raise ValueError("SSH connection details not fully provided. Please set environment variables SSH_TARGET_HOST, SSH_USER, and SSH_JUMP_HOST or provide them as arguments.")    
+        
+        # Create SSH client
+        client = MUXSSHClient(
+            target=_target,
+            user=_user,
+            jump=_jump,
+            no_close=True
+        )
+        
+        client.start()
+        
+        for p1, p2 in ports:
+            client.port_forward(p1, p2)
             
+        return client
+        
+    

@@ -2,19 +2,27 @@ from abc import ABC, abstractmethod
 from PIL.Image import Image as PILImage
 from typing import List
 
+# MISC.
+
+class PromptBuilderBase(ABC):
+    @abstractmethod
+    def build_system(self, **kwargs) -> str:
+        pass
+    
+    @abstractmethod
+    def build_user(self, **kwargs) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def parameters(self) -> dict:
+        pass
+    
+# CORE SERVICES INTERFACES
+
 class ParseInterface(ABC):
     @abstractmethod
     def run(self, in_file) -> bytes:
-        pass
-
-class UploadInterface(ABC):
-    @abstractmethod
-    def run(self, file_path: str) -> int: # code
-        pass
-    
-class DownloadInterface(ABC):
-    @abstractmethod
-    def run(self, filename: str, save_path: str = "") -> bytes: # the file as bytes
         pass
     
 class LLMChatInterface(ABC):
