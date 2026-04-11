@@ -6,7 +6,7 @@ import bottle
 import torch
 import pickle
 
-from EP4UServices.services.local.docling_converter import DoclingConverter
+from services.local.docling_converter import DoclingConverter
 
 app = bottle.Bottle()
 
