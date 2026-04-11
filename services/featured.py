@@ -8,7 +8,6 @@ from EP4UServices.services.core import LLMChatInterface
 
 T = TypeVar("T")
 class NarrationServiceBase(Generic[T]):
-    
     def __init__(self, service: LLMChatInterface):
         super().__init__()
         self.service = service
