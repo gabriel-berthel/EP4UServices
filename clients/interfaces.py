@@ -11,10 +11,6 @@ class HTTPClientBase(ABC, Generic[T]):
     @abstractmethod
     def post(self, *args, **kwargs) -> T:
             pass    
-        
-    @abstractmethod
-    def run(self, *args, **kwargs):
-        pass
 
 class SSHInterface(ABC):
     @abstractmethod

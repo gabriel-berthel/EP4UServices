@@ -6,11 +6,11 @@ import bottle
 import torch
 import pickle
 
-from services.local.docling_converter import DoclingConverter
+from services.local.docling_converter import DoclingParseService
 
 app = bottle.Bottle()
 
-converter = DoclingConverter()
+converter = DoclingParseService()
 
 def hash_file_contents(contents: bytes) -> str:
     h = hashlib.sha256()
@@ -43,7 +43,7 @@ def parse_file():
         return bottle.HTTPResponse(status=400, body="No file provided")
     
     try:
-        result = converter.run(filename)
+        result = converter.parse(filename)
 
         mem_file = BytesIO()
         pickle.dump(result.document, mem_file)

@@ -5,29 +5,27 @@ from typing import Generic, List
 from annotated_types import T
 
 # CORE SERVICES INTERFACES
-
-class CoreService(ABC):
+    
+class CoreInterface(ABC):
     pass
 
-class ParseInterface(CoreService):
+class ParseInterface(CoreInterface):
     @abstractmethod
-    def run(self, in_file) -> bytes:
+    def parse(self, in_file) -> bytes:
         pass
     
-class LLMChatInterface(CoreService):
+class LLMChatInterface(CoreInterface):
     @abstractmethod
-    def run(self, user, system, parameters) -> dict: # the whole response for json validation & retry dowstream.
+    def chat(self, user, system, parameters) -> dict: # the whole response for json validation & retry dowstream.
         pass
     
-class OCRInterface(CoreService):
+class OCRInterface(CoreInterface):
     @abstractmethod
-    def run(self, images: List[PILImage]) -> List[str]:
+    def ocr(self, images: List[PILImage]) -> List[str]:
         pass
     
-class TTSEngineBase(CoreService):
+class TTSEngineInterface(CoreInterface):
     @abstractmethod
     def synthesize(self, text: str) -> bytes:
         """Return raw audio bytes (e.g. PCM or encoded)."""
         pass
-
-

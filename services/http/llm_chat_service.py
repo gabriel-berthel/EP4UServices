@@ -1,13 +1,13 @@
 import json
 
-from EP4UServices.services.remote.interfaces import RemoteChatService
+from EP4UServices.services.http.interfaces import RemoteChatServiceBase
 
-class LLMChatService(RemoteChatService):
+class LLMChatService(RemoteChatServiceBase):
     def __init__(self, url, endpoint = "/", model="ministral-3"):
         super().__init__(url, endpoint, model=model)
         self.model = model
         
-    def run(self, user, system, parameters):
+    def chat(self, user, system, parameters):
         
         payload = {
             "model": self.model,

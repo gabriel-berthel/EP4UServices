@@ -7,7 +7,7 @@ from docling_surya import SuryaOcrOptions
 from docling.datamodel.accelerator_options import AcceleratorDevice
 from services.core import ParseInterface
 
-class DoclingConverter(ParseInterface):
+class DoclingParseService(ParseInterface):
     def __init__(self):
         pipeline_options = PdfPipelineOptions(
             do_ocr=True,
@@ -35,5 +35,5 @@ class DoclingConverter(ParseInterface):
             }
         )
 
-    def run(self, path):
+    def parse(self, path):
         return self.converter.convert(path)

@@ -1,13 +1,13 @@
 
 
-from EP4UServices.services.remote.interfaces import RemoteParseService
+from EP4UServices.services.http.interfaces import RemoteParseServiceBase
 
 
-class DoclingService(RemoteParseService):
+class RemoteParseService(RemoteParseServiceBase):
     def __init__(self, url, endpoint = "/"):
         super().__init__(url, endpoint)
         
-    def run(self, file_path):
+    def parse(self, file_path):
         resp = self.post(file=file_path)
         
         return resp

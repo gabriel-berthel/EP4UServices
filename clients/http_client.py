@@ -41,10 +41,3 @@ class HTTPClient(HTTPClientBase[requests.Response]):
         finally:
             if files:
                 files["file"].close()
-
-    @abstractmethod
-    def run(self, *args, **kwargs):
-        """
-        Abstract method to be implemented by subclasses.
-        """
-        pass

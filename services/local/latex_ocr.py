@@ -6,7 +6,7 @@ from typing import List
 from PIL.Image import Image as PILImage
 from EP4UServices.services.core import OCRInterface
 
-class LatexOCR(OCRInterface):
+class SuryaLatexOCR(OCRInterface):
     _instance = None
 
     def __new__(cls):

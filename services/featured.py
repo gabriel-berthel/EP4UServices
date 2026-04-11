@@ -1,24 +1,18 @@
     
 # FEATURED
 
-from abc import ABC, abstractmethod
-from typing import Generic
+from abc import abstractmethod
+from typing import Generic, TypeVar
 
-from annotated_types import T
+from EP4UServices.services.core import LLMChatInterface
 
-from EP4UServices.services.remote.interfaces import RemoteService
-
-class FeaturedService(ABC):
-    def __init__(self, remote_service: RemoteService):
-        self.core_service = remote_service
+T = TypeVar("T")
+class NarrationServiceBase(Generic[T]):
     
-class NarrationServiceBase(FeaturedService, Generic[T]):
+    def __init__(self, service: LLMChatInterface):
+        super().__init__()
+        self.service = service
+    
     @abstractmethod
     def run(self, t: T) -> str:
         pass
-
-class TTSServiceBase(ABC):
-    @abstractmethod
-    def generate(self, text: str) -> bytes:
-        pass
-    
