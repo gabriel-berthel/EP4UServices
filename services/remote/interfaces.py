@@ -1,0 +1,18 @@
+
+from abc import ABC
+
+from EP4UServices.clients.http_client import HTTPClient
+from EP4UServices.services.core import LLMChatInterface, ParseInterface
+
+class RemoteService(HTTPClient):
+    def __init__(self, url, endpoint = "/"):
+        super().__init__(url, endpoint)
+
+class RemoteChatService(RemoteService, LLMChatInterface):
+    def __init__(self, url, endpoint, model):
+        super().__init__(url, endpoint)
+        self.model = model
+    
+class RemoteParseService(RemoteService, ParseInterface):
+    def __init__(self, url, endpoint):
+        super().__init__(url, endpoint)

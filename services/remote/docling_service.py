@@ -1,7 +1,9 @@
-from EP4UServices.clients.http_client import HTTPClient
-from EP4UServices.services.interfaces import ParseInterface
 
-class DoclingService(HTTPClient, ParseInterface):
+
+from EP4UServices.services.remote.interfaces import RemoteParseService
+
+
+class DoclingService(RemoteParseService):
     def __init__(self, url, endpoint = "/"):
         super().__init__(url, endpoint)
         

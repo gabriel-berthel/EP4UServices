@@ -4,7 +4,7 @@ from surya.recognition import RecognitionPredictor
 from surya.common.surya.schema import TaskNames
 from typing import List
 from PIL.Image import Image as PILImage
-from EP4UServices.services.interfaces import OCRInterface
+from EP4UServices.services.core import OCRInterface
 
 class LatexOCR(OCRInterface):
     _instance = None

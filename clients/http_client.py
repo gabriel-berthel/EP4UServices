@@ -2,7 +2,10 @@ import requests
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any
 
-class HTTPClient(ABC):
+from EP4UServices.clients.interfaces import HTTPClientBase
+
+    
+class HTTPClient(HTTPClientBase[requests.Response]):
     def __init__(self, url: str, endpoint: str = "/"):
         self.url = url.rstrip("/")  # normalize base URL
         self.endpoint = endpoint
@@ -12,7 +15,6 @@ class HTTPClient(ABC):
         GET request to self.url + endpoint with optional query parameters.
         """
         
-
         full_url = f"{self.url}/{self.endpoint.lstrip('/')}"
         if url_params:
             full_url += f"/{url_params.lstrip('/')}"

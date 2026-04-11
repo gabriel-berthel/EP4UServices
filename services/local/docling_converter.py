@@ -5,7 +5,7 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_surya import SuryaOcrOptions
 from docling.datamodel.accelerator_options import AcceleratorDevice
-from services.interfaces import ParseInterface
+from EP4UServices.services.core import ParseInterface
 
 class DoclingConverter(ParseInterface):
     def __init__(self):

@@ -1,11 +1,10 @@
 import json
 
-from EP4UServices.clients.http_client import HTTPClient
-from EP4UServices.services.interfaces import LLMChatInterface
+from EP4UServices.services.remote.interfaces import RemoteChatService
 
-class LLMChatService(HTTPClient, LLMChatInterface):
+class LLMChatService(RemoteChatService):
     def __init__(self, url, endpoint = "/", model="ministral-3"):
-        super().__init__(url, endpoint)
+        super().__init__(url, endpoint, model=model)
         self.model = model
         
     def run(self, user, system, parameters):

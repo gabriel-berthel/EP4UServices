@@ -1,20 +1,8 @@
 import atexit
-from abc import ABC, abstractmethod
 import os
 import subprocess
 
-class SSHInterface(ABC):
-    @abstractmethod
-    def start(self):
-        pass
-    
-    @abstractmethod
-    def close(self):
-        pass
-    
-    @abstractmethod
-    def port_forward(self, local_port, remote_port):
-        pass
+from EP4UServices.clients.interfaces import SSHInterface
     
 class MUXSSHClient(SSHInterface):
     def __init__(self, user, target, jump, no_close=False):
