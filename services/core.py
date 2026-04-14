@@ -23,9 +23,15 @@ class OCRInterface(CoreInterface):
     @abstractmethod
     def ocr(self, images: List[PILImage]) -> List[str]:
         pass
-    
-class TTSEngineInterface(CoreInterface):
+
+class TTSEngineInterface(ABC):
     @abstractmethod
-    def synthesize(self, text: str) -> bytes:
-        """Return raw audio bytes (e.g. PCM or encoded)."""
+    def synthesize(self, speech:str):
+        """Return raw MP3 bytes. It's reponsible for normalizing to MP3."""
+        pass
+    
+class AsyncTTSEngineInterface(ABC):
+    @abstractmethod
+    async def synthesize(self, speech:str):
+        """Return raw MP3 bytes. It's reponsible for normalizing to MP3."""
         pass
