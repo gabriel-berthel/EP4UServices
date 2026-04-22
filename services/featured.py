@@ -6,7 +6,7 @@ from typing import Generic, TypeVar
 from EP4UServices.services.core import LLMChatInterface, ParseInterface, TTSEngineInterface
 
 T = TypeVar("T")
-class NarrationServiceBase(Generic[T]):
+class LLMMathsSpeechBase(Generic[T]):
     def __init__(self, service: LLMChatInterface):
         super().__init__()
         self.service = service

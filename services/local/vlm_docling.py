@@ -1,0 +1,74 @@
+import os
+
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling_surya import SuryaOcrOptions
+from docling.datamodel.accelerator_options import AcceleratorDevice
+from services.core import ParseInterface
+
+
+
+
+
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import (
+    VlmConvertOptions,
+    VlmPipelineOptions,
+)
+from docling.datamodel.vlm_engine_options import (
+    MlxVlmEngineOptions,
+    VlmEngineType,
+)
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.pipeline.vlm_pipeline import VlmPipeline
+
+###### EXAMPLE 2: USING PRESETS (RECOMMENDED)
+# - Uses the "granite_docling" preset explicitly
+# - Same as default but more explicit and configurable
+# - Auto-selects the best runtime for your platform (Transformers by default)
+
+vlm_options = VlmConvertOptions.from_preset("granite_docling")
+
+converter = DocumentConverter(
+    format_options={
+        InputFormat.PDF: PdfFormatOption(
+            pipeline_cls=VlmPipeline,
+            pipeline_options=VlmPipelineOptions(vlm_options=vlm_options),
+        ),
+    }
+)
+
+doc = converter.convert(source=source).document
+
+
+class DoclingParseService(ParseInterface):
+    def __init__(self):
+        pipeline_options = PdfPipelineOptions(
+            do_ocr=True,
+            ocr_model="suryaocr",
+            allow_external_plugins=True,
+            ocr_options=SuryaOcrOptions(lang=["en"], force_full_page_ocr=True, use_gpu=True),
+            generate_picture_images=True,
+            generate_table_images=True,
+            generate_parsed_pages=True,
+            do_formula_enrichment=True,
+            do_picture_description=False,
+            # code enrichment => requires VLM
+            do_chart_extraction=False, # Requires granite
+            do_picture_classification = False, # Requires Granite
+            images_scale=1.0,
+            do_table_structure=True,
+            accelerator = AcceleratorDevice.CUDA,
+            ocr_batch_size=48,
+            layout_batch_size=48
+        )
+        
+        self.converter = DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
+            }
+        )
+
+    def parse(self, path):
+        return self.converter.convert(path)

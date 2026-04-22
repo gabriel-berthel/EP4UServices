@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from PIL.Image import Image as PILImage
-from typing import Generic, List
+from typing import Generic, List, Optional
 
 from annotated_types import T
 
@@ -17,6 +17,11 @@ class ParseInterface(CoreInterface):
 class LLMChatInterface(CoreInterface):
     @abstractmethod
     def chat(self, user, system, parameters) -> dict: # the whole response for json validation & retry dowstream.
+        pass
+    
+class LLMVisionInterface(CoreInterface):
+    @abstractmethod
+    def chat(self, user, system, images: list[str], parameters) -> dict: # the whole response for json validation & retry dowstream.
         pass
     
 class OCRInterface(CoreInterface):
