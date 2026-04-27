@@ -6,7 +6,7 @@ import bottle
 import torch
 import pickle
 
-from EP4UServices.services.local.piper_tts import LocalPiperTTS
+from services.local.piper_tts import LocalPiperTTS
 from services.local.docling_converter import DoclingParseService
 
 app = bottle.Bottle()
