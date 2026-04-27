@@ -29,11 +29,48 @@ signal.signal(signal.SIGINT, cleanup)   # Ctrl+C
 signal.signal(signal.SIGTERM, cleanup)  # kill <PID>
 
 
+from bottle import request, response
+import json
+
+@bottle.post('/tts')
+def tts():
+    try:
+        data = request.json  # Bottle parses JSON automatically
+
+        if not data:
+            response.status = 400
+            return {"error": "Invalid or missing JSON payload"}
+
+        text = data.get("text")
+        voice = data.get("voice")
+
+        if not text:
+            response.status = 400
+            return {"error": "Missing 'text' field"}
+
+        if not voice:
+            response.status = 400
+            return {"error": "Missing 'voice' field"}
+
+        # Map voice name to model path (you define this)
+        model_path = f"./models/{voice}.onnx"
+
+        tts_engine = LocalPiperTTS(model_path=model_path)
+
+        audio_bytes = tts_engine.synthesize(text)
+
+        response.content_type = 'audio/mpeg'
+        return audio_bytes
+
+    except Exception as e:
+        response.status = 500
+        return {"error": str(e)}
+
 @bottle.post('/parse')
 def parse_file():
     
     content = bottle.request.files.get("file")
-    filename = f"document_.pdf"
+    filename = f"document_tmp.pdf"
     
     # Write bytes to file
     with open(filename, "wb") as f:
