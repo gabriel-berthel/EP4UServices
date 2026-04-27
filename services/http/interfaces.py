@@ -6,6 +6,11 @@ class RemoteService(HTTPClient):
     def __init__(self, url, endpoint = "/"):
         super().__init__(url, endpoint)
         
+class RemoteTTSServiceBase(RemoteService, TTSEngineInterface):
+    def __init__(self, url, endpoint, voice):
+        super().__init__(url, endpoint)
+        self.voice = voice
+
 class RemoteChatServiceBase(RemoteService, LLMChatInterface):
     def __init__(self, url, endpoint, model):
         super().__init__(url, endpoint)

@@ -61,6 +61,7 @@ def tts():
         audio_bytes = tts_engine.synthesize(text)
 
         response.content_type = 'audio/mpeg'
+        response.set_header('Content-Disposition', 'inline; filename="speech.mp3"')
         return audio_bytes
 
     except Exception as e:

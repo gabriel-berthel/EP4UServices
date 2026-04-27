@@ -1,11 +1,9 @@
-from pydub import AudioSegment
-from piper import PiperVoice
 import io
 import wave
 from piper import PiperVoice
 from pydub import AudioSegment
 
-from EP4UServices.services.core import TTSEngineInterface
+from services.core import TTSEngineInterface
 
 
 class LocalPiperTTS(TTSEngineInterface):
