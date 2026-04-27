@@ -6,6 +6,7 @@ import bottle
 import torch
 import pickle
 
+from EP4UServices.services.local.piper_tts import LocalPiperTTS
 from services.local.docling_converter import DoclingParseService
 
 app = bottle.Bottle()
@@ -53,7 +54,7 @@ def tts():
             return {"error": "Missing 'voice' field"}
 
         # Map voice name to model path (you define this)
-        model_path = f"./models/{voice}.onnx"
+        model_path = f"./voices/{voice}.onnx"
 
         tts_engine = LocalPiperTTS(model_path=model_path)
 
