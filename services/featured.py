@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
-from EP4UServices.services.core import LLMChatInterface, ParseInterface, TTSEngineInterface
+from EP4UServices.services.core import AsyncTTSEngineInterface, LLMChatInterface, ParseInterface, TTSEngineInterface
 
 T = TypeVar("T")
 class LLMMathsSpeechBase(Generic[T]):
@@ -35,4 +35,17 @@ class TTSServiceBase(ABC):
     
     @abstractmethod
     def save(self, script: str, file_path) -> None:
+        pass
+    
+class AsyncTTSServiceBase(ABC):
+    def __init__(self, service: AsyncTTSEngineInterface):
+        super().__init__()
+        self.service = service
+    
+    @abstractmethod
+    async def generate(self, script: str) -> bytes:
+        pass
+    
+    @abstractmethod
+    async def save(self, script: str, file_path) -> None:
         pass

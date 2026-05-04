@@ -81,7 +81,7 @@ class MUXSSHClient(SSHInterface):
         self.close()
         
     @staticmethod    
-    def set_up_and_run(ports: list[tuple[int, int]], target=None, user=None, jump=None) -> "MUXSSHClient":
+    def set_up_and_run(ports: list[tuple[int, int]], target=None, user=None, jump=None, no_close=False) -> "MUXSSHClient":
         
         _target = target if target else os.environ.get("SSH_TARGET_HOST", None)
         _user = user if user else os.environ.get("SSH_USER",  None)
@@ -95,7 +95,7 @@ class MUXSSHClient(SSHInterface):
             target=_target,
             user=_user,
             jump=_jump,
-            no_close=True
+            no_close=no_close
         )
         
         client.start()
