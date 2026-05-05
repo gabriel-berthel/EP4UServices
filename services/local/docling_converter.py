@@ -37,5 +37,4 @@ class DoclingParseService(ParseInterface):
 
     def parse(self, path):
         convertion = self.converter.convert(path)
-        print(vars(convertion))
-        return convertion
+        return convertion.document # DO NOT generate parsed page
