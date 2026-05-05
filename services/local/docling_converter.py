@@ -14,9 +14,9 @@ class DoclingParseService(ParseInterface):
             ocr_model="suryaocr",
             allow_external_plugins=True,
             ocr_options=SuryaOcrOptions(lang=["en"], force_full_page_ocr=True, use_gpu=True),
-            generate_picture_images=True,
-            generate_table_images=True,
-            generate_parsed_pages=True,
+            generate_picture_images=False,
+            generate_table_images=False,
+            generate_parsed_pages=False,
             do_formula_enrichment=True,
             do_picture_description=False,
             # code enrichment => requires VLM
