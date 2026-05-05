@@ -36,4 +36,6 @@ class DoclingParseService(ParseInterface):
         )
 
     def parse(self, path):
-        return self.converter.convert(path).document
+        convertion = self.converter.convert(path)
+        print(vars(convertion))
+        return convertion
