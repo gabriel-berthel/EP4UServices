@@ -85,7 +85,7 @@ def parse_file():
         result = converter.parse(filename)
 
         mem_file = BytesIO()
-        pickle.dump(result.document, mem_file)
+        pickle.dump(result, mem_file)
         mem_file.seek(0)  # important, rewind to start
 
         # Set headers for download
