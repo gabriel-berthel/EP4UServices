@@ -14,6 +14,7 @@ class PiperTTS(TTSEngineInterface):
 
     def __init__(self, model_path: str, use_cuda: bool = False):
         self.voice = PiperVoice.load(model_path, use_cuda=use_cuda)
+        print('Finished loading')
 
     def synthesize(self, text: str) -> bytes:
         # 1. In-memory WAV buffer

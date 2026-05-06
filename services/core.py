@@ -35,4 +35,3 @@ class TTSEngineInterface(ABC):
     def synthesize(self, speech:str):
         """Return raw MP3 bytes. It's reponsible for normalizing to MP3."""
         pass
-    

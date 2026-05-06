@@ -4,6 +4,7 @@ import pickle
 import httpx
 import torch
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.responses import Response, StreamingResponse
 
@@ -25,12 +26,34 @@ def cleanup():
     torch.cuda.empty_cache()
     torch.cuda.ipc_collect()
     print("Cleanup done.")
+    
+def wav_to_mp3_bytes(wav_bytes: bytes) -> bytes:
+    import subprocess
+
+    p = subprocess.Popen(
+        [
+            "ffmpeg",
+            "-y",
+            "-i", "pipe:0",
+            "-f", "mp3",
+            "-codec:a", "libmp3lame",
+            "-b:a", "192k",
+            "pipe:1",
+        ],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    out, err = p.communicate(input=wav_bytes)
+    if p.returncode != 0:
+        raise RuntimeError(err.decode())
+
+    return out
 
 # ---------------------------
-# Lifespan (modern way)
+# Lifespan
 # ---------------------------
-
-from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -77,12 +100,13 @@ async def tts(request: Request):
         raise HTTPException(status_code=400, detail="Missing 'voice'")
 
     model_path = f"./voices/{voice}.onnx"
-
+    
     tts_engine = PiperTTS(model_path=model_path)
     audio_bytes = tts_engine.synthesize(text)
-
+    mp3_bytes = wav_to_mp3_bytes(audio_bytes)
+    
     return Response(
-        content=audio_bytes,
+        content=mp3_bytes,
         media_type="audio/mpeg",
         headers={"Content-Disposition": 'inline; filename="speech.mp3"'}
     )
