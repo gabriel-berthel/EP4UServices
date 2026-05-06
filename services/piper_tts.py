@@ -6,7 +6,7 @@ from pydub import AudioSegment
 from services.core import TTSEngineInterface
 
 
-class LocalPiperTTS(TTSEngineInterface):
+class PiperTTS(TTSEngineInterface):
     """
     Piper TTS (fully in-memory)
     Contract: returns MP3 bytes

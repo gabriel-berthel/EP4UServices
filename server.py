@@ -1,105 +1,158 @@
-
-import hashlib
 from io import BytesIO
-import signal  #
-import bottle
-import torch
+import signal
 import pickle
+import httpx
+import torch
 
-from services.local.piper_tts import LocalPiperTTS
-from services.local.docling_converter import DoclingParseService
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException
+from fastapi.responses import Response, StreamingResponse
 
-app = bottle.Bottle()
+from services.piper_tts import PiperTTS
+from services.docling_converter import DoclingParser
 
-converter = DoclingParseService()
+# ---------------------------
+# Helpers
+# ---------------------------
 
 def hash_file_contents(contents: bytes) -> str:
+    import hashlib
     h = hashlib.sha256()
     h.update(contents)
     return h.hexdigest()
 
-def cleanup(signum, frame):
-    print("\nSignal received, cleaning up GPU memory...")
+def cleanup():
+    print("\nCleaning up GPU memory...")
     torch.cuda.empty_cache()
     torch.cuda.ipc_collect()
-    print("Cleanup done. Exiting.")
+    print("Cleanup done.")
+
+# ---------------------------
+# Lifespan (modern way)
+# ---------------------------
+
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Starting service...")
+
+    # Initialize shared services
+    app.state.converter = DoclingParser()
+    app.state.http_client = httpx.AsyncClient(timeout=60)
+
+    yield
+
+    print("Shutting down service...")
+    await app.state.http_client.aclose()
+    cleanup()
+
+app = FastAPI(lifespan=lifespan)
+
+# ---------------------------
+# Signal handling (still useful)
+# ---------------------------
+
+def handle_signal(signum, frame):
+    print(f"\nSignal {signum} received")
+    cleanup()
     exit(0)
 
-# Register handlers
-signal.signal(signal.SIGINT, cleanup)   # Ctrl+C
-signal.signal(signal.SIGTERM, cleanup)  # kill <PID>
+signal.signal(signal.SIGINT, handle_signal)
+signal.signal(signal.SIGTERM, handle_signal)
 
+# ---------------------------
+# TTS Endpoint
+# ---------------------------
 
-from bottle import request, response
-import json
+@app.post("/tts")
+async def tts(request: Request):
+    data = await request.json()
 
-@bottle.post('/tts')
-def tts():
-    try:
-        data = request.json  # Bottle parses JSON automatically
+    text = data.get("text")
+    voice = data.get("voice")
 
-        if not data:
-            response.status = 400
-            return {"error": "Invalid or missing JSON payload"}
+    if not text:
+        raise HTTPException(status_code=400, detail="Missing 'text'")
+    if not voice:
+        raise HTTPException(status_code=400, detail="Missing 'voice'")
 
-        text = data.get("text")
-        voice = data.get("voice")
+    model_path = f"./voices/{voice}.onnx"
 
-        if not text:
-            response.status = 400
-            return {"error": "Missing 'text' field"}
+    tts_engine = PiperTTS(model_path=model_path)
+    audio_bytes = tts_engine.synthesize(text)
 
-        if not voice:
-            response.status = 400
-            return {"error": "Missing 'voice' field"}
+    return Response(
+        content=audio_bytes,
+        media_type="audio/mpeg",
+        headers={"Content-Disposition": 'inline; filename="speech.mp3"'}
+    )
 
-        # Map voice name to model path (you define this)
-        model_path = f"./voices/{voice}.onnx"
+# ---------------------------
+# Parse Endpoint
+# ---------------------------
 
-        tts_engine = LocalPiperTTS(model_path=model_path)
+@app.post("/parse")
+async def parse_file(file: UploadFile = File(...)):
+    if not file:
+        raise HTTPException(status_code=400, detail="No file provided")
 
-        audio_bytes = tts_engine.synthesize(text)
+    contents = await file.read()
+    filename = "document_tmp.pdf"
 
-        response.content_type = 'audio/mpeg'
-        response.set_header('Content-Disposition', 'inline; filename="speech.mp3"')
-        return audio_bytes
-
-    except Exception as e:
-        response.status = 500
-        return {"error": str(e)}
-
-@bottle.post('/parse')
-def parse_file():
-    
-    content = bottle.request.files.get("file")
-    filename = f"document_tmp.pdf"
-    
-    # Write bytes to file
     with open(filename, "wb") as f:
-        f.write(content.file.read())
-      
-    if not content:
-        return bottle.HTTPResponse(status=400, body="No file provided")
-    
+        f.write(contents)
+
     try:
-        result = converter.parse(filename)
+        result = app.state.converter.parse(filename)
 
         mem_file = BytesIO()
         pickle.dump(result, mem_file)
-        mem_file.seek(0)  # important, rewind to start
+        mem_file.seek(0)
 
-        # Set headers for download
-        bottle.response.content_type = "application/octet-stream"
-        bottle.response.set_header("Content-Disposition", f"attachment; filename={filename}.pickle")
+        return StreamingResponse(
+            mem_file,
+            media_type="application/octet-stream",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}.pickle"
+            }
+        )
 
     except Exception as e:
         print("Error parsing:", e)
-        return bottle.HTTPResponse(status=500, body="Error parsing file")
+        raise HTTPException(status_code=500, detail="Error parsing file")
 
-    return mem_file.getvalue()
+# ---------------------------
+# Ollama Forwarding Endpoint
+# ---------------------------
 
+OLLAMA_URL = "http://localhost:11434/v1/chat/completions"
 
-if __name__ == '__main__':
-    torch.cuda.empty_cache()
-    torch.cuda.ipc_collect()
-    bottle.run(host='localhost', port=8080)
+@app.post("/ollama")
+async def forward_to_ollama(request: Request):
+    """
+    Transparent proxy to Ollama/OpenAI-compatible API.
+    Just forwards JSON payload and returns response.
+    """
+    payload = await request.json()
+
+    try:
+        client: httpx.AsyncClient = app.state.http_client
+
+        resp = await client.post(OLLAMA_URL, json=payload)
+
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type=resp.headers.get("content-type", "application/json")
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ---------------------------
+# Entry point
+# ---------------------------
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)

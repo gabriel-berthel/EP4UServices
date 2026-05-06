@@ -19,9 +19,10 @@ class LLMChatInterface(CoreInterface):
     def chat(self, user, system, parameters) -> dict: # the whole response for json validation & retry dowstream.
         pass
     
-class LLMVisionInterface(CoreInterface):
+class LLMServicesInterface(LLMChatInterface, ABC):
     @abstractmethod
-    def chat(self, user, system, images: list[str], parameters) -> dict: # the whole response for json validation & retry dowstream.
+    def formula_to_speech(self, text: str) -> str:
+        """Convert math formulas into natural spoken-language text suitable for TTS."""
         pass
     
 class OCRInterface(CoreInterface):
@@ -35,8 +36,3 @@ class TTSEngineInterface(ABC):
         """Return raw MP3 bytes. It's reponsible for normalizing to MP3."""
         pass
     
-class AsyncTTSEngineInterface(ABC):
-    @abstractmethod
-    async def synthesize(self, speech:str):
-        """Return raw MP3 bytes. It's reponsible for normalizing to MP3."""
-        pass
